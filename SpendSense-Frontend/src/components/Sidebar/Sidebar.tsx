@@ -3,9 +3,13 @@ import NavLogo from "./NavLogo";
 import NavProfile from "./NavProfile";
 import NavLinks from "./NavLinks";
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
   return (
-    <aside className="w-64 bg-primary text-white h-screen flex flex-col shadow-xl transition-transform duration-300 ease-in-out transform hover:translate-x-0">
+    <aside
+      className={`${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 w-64 bg-primary text-white h-screen flex flex-col shadow-xl fixed md:static top-0 left-0 transition-transform duration-300 ease-in-out z-50`}
+    >
       <div className="flex-shrink-0">
         <NavLogo />
       </div>
