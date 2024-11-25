@@ -1,7 +1,6 @@
 // Maps to the database table for storing expense records.
 
 package SpendSense.Backend.entity;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 public class Expense {
     @Id //primary key
     @GeneratedValue(strategy = GenerationType.AUTO) // auto increment on new creation
-    private long id;
+    private Long id;
 
     private String title;
     private String description;
