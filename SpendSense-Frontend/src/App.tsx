@@ -1,14 +1,13 @@
-import React from "react"
+import React from "react";
+import Layout from "./components/Layout/Layout";
+import Home from "./pages/Home";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <>
-      <div className="">
-        Hello, My name is Aman Bhatt
-      </div>
-      
-    </>
-  )
-}
+    <Layout>
+      <Home />
+    </Layout>
+  );
+};
 
 export default App;
