@@ -38,7 +38,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, refreshData,
             </div>
             <div className="flex flex-col items-end">
               <div className="text-gray-600 text-sm">{expense.description}</div>
-              <div className="text-teal font-semibold">${expense.amount}</div>
+              <div className="text-teal font-semibold">₹{expense.amount}</div>
             </div>
             <div className="flex space-x-3 ml-4">
               {onEdit && (

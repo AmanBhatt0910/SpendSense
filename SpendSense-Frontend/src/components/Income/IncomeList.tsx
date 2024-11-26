@@ -30,7 +30,7 @@ export const IncomeList: React.FC<IncomeListProps> = ({ incomeEntries, refreshDa
             </div>
             <div className="flex flex-col items-end">
               <div className="text-gray-600 text-sm">{entry.description}</div>
-              <div className="text-teal font-semibold">${entry.amount}</div>
+              <div className="text-teal font-semibold">₹{entry.amount}</div>
             </div>
             <div className="flex space-x-3 ml-4">
               {onEdit && (

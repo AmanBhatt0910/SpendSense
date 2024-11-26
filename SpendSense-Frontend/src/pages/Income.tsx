@@ -29,7 +29,7 @@ const Income: React.FC = () => {
     setIncomeToEdit(incomeToEdit);
   };
 
-  const remainingBudget = 3000 - totalIncome;
+  const remainingBudget = 100000 - totalIncome;
 
   return (
     <div className="bg-neutral-light min-h-screen p-8">
@@ -37,8 +37,8 @@ const Income: React.FC = () => {
         <h1 className="text-primary text-4xl font-bold mb-8">Income Management</h1>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          <SummaryCard title="Total Income" value={`$${totalIncome}`} icon="💵" />
-          <SummaryCard title="Remaining Budget" value={`$${remainingBudget}`} icon="💰" />
+          <SummaryCard title="Total Income" value={`₹${totalIncome}`} icon="💵" />
+          <SummaryCard title="Remaining Budget" value={`₹${remainingBudget}`} icon="💰" />
         </div>
 
         <div className="mb-8">

@@ -32,7 +32,7 @@ const Expense: React.FC = () => {
   };
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + Math.abs(expense.amount), 0);
-  const remainingBudget = 1000 - totalExpenses;
+  const remainingBudget = 10000 - totalExpenses;
 
   const handleEdit = (expense: Expense) => {
     setEditingExpense(expense);
@@ -44,8 +44,8 @@ const Expense: React.FC = () => {
         <h1 className="text-primary text-4xl font-bold mb-8">Expense Management</h1>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          <SummaryCard title="Total Expenses" value={`$${totalExpenses}`} icon="💸" />
-          <SummaryCard title="Remaining Budget" value={`$${remainingBudget}`} icon="💰" />
+          <SummaryCard title="Total Expenses" value={`₹${totalExpenses}`} icon="💸" />
+          <SummaryCard title="Remaining Budget" value={`₹${remainingBudget}`} icon="💰" />
         </div>
 
         <div className="mb-8">
