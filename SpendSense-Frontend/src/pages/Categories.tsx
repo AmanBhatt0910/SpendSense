@@ -7,5 +7,5 @@ const Categories: React.FC = () => {
     );
   };
   
-  export default Categories;
-  
+export default Categories;
+// such as "Food", "Transportation", "Entertainment", etc.

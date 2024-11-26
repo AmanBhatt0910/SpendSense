@@ -7,5 +7,6 @@ const Goals: React.FC = () => {
     );
   };
   
-  export default Goals;
+export default Goals;
+// helps users set financial goals and monitor their progress towards achieving them.
   

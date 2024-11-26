@@ -1,12 +1,14 @@
 import React from "react";
+import Header from "../components/Home/Header";
+import Statistics from "../components/Home/Statistics";
+import QuickActions from "../components/Home/QuickActions";
 
 const Dashboard: React.FC = () => {
   return (
-    <div>
-      <h1 className="text-primary text-4xl font-bold mb-6">Welcome to SpendSense</h1>
-      <p className="text-neutral-dark text-lg">
-        Manage your finances with ease. SpendSense helps you track, save, and plan for a better future.
-      </p>dashboard
+    <div className="bg-neutral-light min-h-screen p-8">
+      <Header />
+      <Statistics />
+      <QuickActions />
     </div>
   );
 };
