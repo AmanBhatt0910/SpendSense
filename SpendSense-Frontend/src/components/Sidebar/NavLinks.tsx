@@ -1,6 +1,16 @@
 import React from "react";
 import { navItems } from "../../data/navData";
-import { HomeIcon, ChartBarIcon, CogIcon, BanknotesIcon, CreditCardIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  ChartBarIcon,
+  CogIcon,
+  BanknotesIcon,
+  CreditCardIcon,
+  DocumentTextIcon,
+  BookmarkIcon,
+  ClipboardDocumentCheckIcon,
+  BellAlertIcon,
+} from "@heroicons/react/24/outline";
 
 type HeroIcon = React.ComponentType<React.SVGProps<SVGSVGElement> & { title?: string; titleId?: string }>;
 
@@ -10,6 +20,10 @@ const iconMap: { [key: string]: HeroIcon } = {
   CogIcon,
   BanknotesIcon,
   CreditCardIcon,
+  DocumentTextIcon,
+  BookmarkIcon,
+  ClipboardDocumentCheckIcon,
+  BellAlertIcon,
 };
 
 const NavLinks: React.FC = () => {

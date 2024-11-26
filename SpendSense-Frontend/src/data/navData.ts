@@ -19,12 +19,36 @@ export const navItems = [
   },
   {
     id: 4,
+    label: "Transactions",
+    href: "/transactions",
+    icon: "DocumentTextIcon",
+  },
+  {
+    id: 5,
+    label: "Categories",
+    href: "/categories",
+    icon: "BookmarkIcon",
+  },
+  {
+    id: 6,
+    label: "Goals",
+    href: "/goals",
+    icon: "ClipboardDocumentCheckIcon",
+  },
+  {
+    id: 7,
     label: "Reports",
     href: "/reports",
     icon: "ChartBarIcon",
   },
   {
-    id: 5,
+    id: 8,
+    label: "Notifications",
+    href: "/notifications",
+    icon: "BellAlertIcon",
+  },
+  {
+    id: 9,
     label: "Settings",
     href: "/settings",
     icon: "CogIcon",
