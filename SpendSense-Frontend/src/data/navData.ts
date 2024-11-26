@@ -1,40 +1,32 @@
-import { 
-  HomeIcon, 
-  ChartBarIcon, 
-  CogIcon, 
-  BanknotesIcon,  // for Income
-  CreditCardIcon   // for Expense
-} from "@heroicons/react/24/outline";
-
 export const navItems = [
   {
     id: 1,
     label: "Dashboard",
-    href: "#",
+    href: "/",
     icon: "HomeIcon",
   },
   {
     id: 2,
     label: "Income",
-    href: "#",
+    href: "/income",
     icon: "BanknotesIcon",
   },
   {
     id: 3,
     label: "Expense",
-    href: "#",
+    href: "/expense",
     icon: "CreditCardIcon",
   },
   {
     id: 4,
     label: "Reports",
-    href: "#",
+    href: "/reports",
     icon: "ChartBarIcon",
   },
   {
     id: 5,
     label: "Settings",
-    href: "#",
+    href: "/settings",
     icon: "CogIcon",
   },
 ];
