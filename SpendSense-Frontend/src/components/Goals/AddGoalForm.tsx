@@ -47,7 +47,7 @@ const AddGoalForm: React.FC<AddGoalFormProps> = ({ addGoal }) => {
 
         <div className="mb-4">
           <label className="block text-neutral-dark text-sm mb-2" htmlFor="amount">
-            Target Amount ($)
+            Target Amount (₹)
           </label>
           <input
             type="number"

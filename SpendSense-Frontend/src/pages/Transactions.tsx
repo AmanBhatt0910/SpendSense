@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SummaryCard } from '../components/Transactions/SummaryCard';
 import { FinancialChart } from '../components/Transactions/FinancialChart';
 import { TransactionFilters } from '../components/Transactions/TransactionFilters';
@@ -13,11 +13,71 @@ interface Transaction {
 }
 
 const Transactions: React.FC = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: 1, date: '2024-11-25', category: 'Food', amount: -20.5, icon: '🍔' },
-    { id: 2, date: '2024-11-24', category: 'Salary', amount: 2000, icon: '💼' },
-    { id: 3, date: '2024-11-23', category: 'Transportation', amount: -15, icon: '🚗' },
-  ]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/stats/chart');
+        const data = await response.json();
+
+        const incomeTransactions = data.incomeList.map((income: any) => ({
+          id: income.id,
+          date: income.date,
+          category: income.category,
+          amount: income.amount,
+          icon: '💰',
+        }));
+
+        const expenseTransactions = data.expenseList.map((expense: any) => ({
+          id: expense.id,
+          date: expense.date,
+          category: expense.category,
+          amount: -expense.amount,
+          icon: '💸',
+        }));
+
+        const allTransactions = [...incomeTransactions, ...expenseTransactions].sort((a, b) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+
+        setTransactions(allTransactions);
+        setFilteredTransactions(allTransactions.slice(0, 5));
+
+        const incomeSum = incomeTransactions.reduce((acc: number, curr: Transaction) => acc + curr.amount, 0);
+        const expenseSum = expenseTransactions.reduce((acc: number, curr: Transaction) => acc + curr.amount, 0);
+
+        setTotalIncome(incomeSum);
+        setTotalExpenses(expenseSum);
+
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  const handleFilterChange = (category: string, date: string) => {
+    let filteredData = [...transactions];
+
+    if (category !== 'all') {
+      filteredData = filteredData.filter((transaction) => transaction.category === category);
+    }
+
+    if (date) {
+      filteredData = filteredData.filter((transaction) =>
+        transaction.date.startsWith(date)
+      );
+    }
+
+    setFilteredTransactions(filteredData.slice(0, 5));
+  };
+
+  const netSavings = totalIncome + totalExpenses;
 
   return (
     <div className="bg-neutral-light min-h-screen p-8">
@@ -26,9 +86,9 @@ const Transactions: React.FC = () => {
         <p className="text-neutral-dark text-lg mb-6">View and manage all your financial transactions.</p>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          <SummaryCard title="Total Income" value="$4,200" icon="💰" />
-          <SummaryCard title="Total Expenses" value="$2,150" icon="💸" />
-          <SummaryCard title="Net Savings" value="$2,050" icon="📈" />
+          <SummaryCard title="Total Income" value={`₹${totalIncome}`} icon="💰" />
+          <SummaryCard title="Total Expenses" value={`₹${totalExpenses}`} icon="💸" />
+          <SummaryCard title="Net Savings" value={`₹${netSavings}`} icon="📈" />
         </div>
 
         <div className="mb-8 bg-white rounded-xl shadow-lg p-6">
@@ -36,12 +96,12 @@ const Transactions: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <TransactionFilters />
+          <TransactionFilters onFilterChange={handleFilterChange} />
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-semibold text-neutral-dark mb-4">Recent Transactions</h2>
-          <TransactionList transactions={transactions} />
+          <h2 className="text-2xl font-semibold text-neutral-dark mb-4">Latest Transactions</h2>
+          <TransactionList transactions={filteredTransactions} />
         </div>
       </div>
     </div>

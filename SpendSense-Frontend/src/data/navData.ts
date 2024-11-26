@@ -37,18 +37,12 @@ export const navItems = [
   },
   {
     id: 7,
-    label: "Reports",
-    href: "/reports",
-    icon: "ChartBarIcon",
-  },
-  {
-    id: 8,
     label: "Notifications",
     href: "/notifications",
     icon: "BellAlertIcon",
   },
   {
-    id: 9,
+    id: 8,
     label: "Settings",
     href: "/settings",
     icon: "CogIcon",
