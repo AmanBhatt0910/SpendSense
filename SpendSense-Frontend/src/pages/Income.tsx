@@ -1,18 +1,34 @@
-// pages/income.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { SummaryCard } from '../components/Income/SummaryCard';
 import { IncomeList } from '../components/Income/IncomeList';
 import { IncomeChart } from '../components/Income/IncomeChart';
 import { IncomeForm } from '../components/Income/IncomeForm';
 
 const Income: React.FC = () => {
-  const [incomeEntries, setIncomeEntries] = useState([
-    { id: 1, date: '2024-11-25', category: 'Salary', amount: 1500, description: 'Monthly Salary' },
-    { id: 2, date: '2024-11-24', category: 'Freelancing', amount: 500, description: 'Freelance work' },
-    { id: 3, date: '2024-11-23', category: 'Investment', amount: 200, description: 'Stocks' },
-  ]);
+  const [incomeEntries, setIncomeEntries] = useState<any[]>([]);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [incomeToEdit, setIncomeToEdit] = useState<any | null>(null);
 
-  const totalIncome = incomeEntries.reduce((sum, income) => sum + income.amount, 0);
+  const fetchIncomeData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/income/all');
+      setIncomeEntries(response.data);
+      setTotalIncome(response.data.reduce((sum: number, income: any) => sum + income.amount, 0));
+    } catch (error) {
+      console.error('Error fetching income data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchIncomeData();
+  }, []);
+
+  const handleEdit = (id: number) => {
+    const incomeToEdit = incomeEntries.find((entry) => entry.id === id);
+    setIncomeToEdit(incomeToEdit);
+  };
+
   const remainingBudget = 3000 - totalIncome;
 
   return (
@@ -30,11 +46,11 @@ const Income: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <IncomeForm />
+          <IncomeForm refreshData={fetchIncomeData} incomeToEdit={incomeToEdit} />
         </div>
 
         <div className="mb-8">
-          <IncomeList incomeEntries={incomeEntries} />
+          <IncomeList incomeEntries={incomeEntries} refreshData={fetchIncomeData} onEdit={handleEdit} />
         </div>
       </div>
     </div>

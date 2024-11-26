@@ -1,18 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SummaryCard } from '../components/Expense/SummaryCard';
 import { ExpenseList } from '../components/Expense/ExpenseList';
 import { ExpenseChart } from '../components/Expense/ExpenseChart';
 import { ExpenseForm } from '../components/Expense/ExpenseForm';
 
+interface Expense {
+  id: number;
+  date: string;
+  category: string;
+  amount: number;
+  description: string;
+}
+
 const Expense: React.FC = () => {
-  const [expenses, setExpenses] = useState([
-    { id: 1, date: '2024-11-25', category: 'Food', amount: -20.5, description: 'Lunch' },
-    { id: 2, date: '2024-11-24', category: 'Transportation', amount: -15, description: 'Bus fare' },
-    { id: 3, date: '2024-11-23', category: 'Entertainment', amount: -50, description: 'Movie night' },
-  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/expense/all');
+      if (!response.ok) throw new Error('Failed to fetch expenses');
+      const data = await response.json();
+      setExpenses(data);
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    }
+  };
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + Math.abs(expense.amount), 0);
   const remainingBudget = 1000 - totalExpenses;
+
+  const handleEdit = (expense: Expense) => {
+    setEditingExpense(expense);
+  };
 
   return (
     <div className="bg-neutral-light min-h-screen p-8">
@@ -25,15 +49,28 @@ const Expense: React.FC = () => {
         </div>
 
         <div className="mb-8">
-          <ExpenseChart expenses={expenses.map((e) => ({ category: e.category, amount: e.amount }))} />
+          <ExpenseChart
+            expenses={expenses.map((e) => ({
+              category: e.category,
+              amount: e.amount,
+            }))}
+          />
         </div>
 
         <div className="mb-8">
-          <ExpenseForm />
+          <ExpenseForm
+            refreshData={fetchExpenses}
+            initialData={editingExpense}
+            onFormSubmit={() => setEditingExpense(null)}
+          />
         </div>
 
         <div className="mb-8">
-          <ExpenseList expenses={expenses} />
+          <ExpenseList
+            expenses={expenses}
+            refreshData={fetchExpenses}
+            onEdit={handleEdit}
+          />
         </div>
       </div>
     </div>
