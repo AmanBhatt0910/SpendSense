@@ -24,15 +24,20 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ refreshData, incomeToEdi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
       if (incomeToEdit) {
-        await axios.put(`http://localhost:8080/api/income/${incomeToEdit.id}`, {
+        await axios.put(`${apiUrl}/api/income/${incomeToEdit.id}`, {
           category,
           amount,
           description,
           date,
         });
       } else {
-        await axios.post('http://localhost:8080/api/income', {
+        await axios.post(`${apiUrl}/api/income`, {
           category,
           amount,
           description,

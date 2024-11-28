@@ -12,7 +12,12 @@ const Income: React.FC = () => {
 
   const fetchIncomeData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/income/all');
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
+      const response = await axios.get(`${apiUrl}/api/income/all`);
       setIncomeEntries(response.data);
       setTotalIncome(response.data.reduce((sum: number, income: any) => sum + income.amount, 0));
     } catch (error) {

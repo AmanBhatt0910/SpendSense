@@ -21,7 +21,13 @@ const Transactions: React.FC = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/stats/chart');
+        const apiUrl = import.meta.env.VITE_API_URL;
+        if (!apiUrl) {
+          console.error('API URL is not defined in environment variables.');
+          return;
+        }
+
+        const response = await fetch(`${apiUrl}/api/stats/chart`);
         const data = await response.json();
 
         const incomeTransactions = data.incomeList.map((income: any) => ({

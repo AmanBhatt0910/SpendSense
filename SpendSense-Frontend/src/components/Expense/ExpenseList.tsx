@@ -19,7 +19,12 @@ interface ExpenseListProps {
 export const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, refreshData, onEdit }) => {
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8080/api/expense/${id}`);
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
+      await axios.delete(`${apiUrl}/api/expense/${id}`);
       await refreshData();
     } catch (error) {
       console.error('Error deleting expense entry:', error);

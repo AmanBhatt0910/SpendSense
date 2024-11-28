@@ -18,16 +18,21 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (initialData) {
       setCategory(initialData.category);
       setAmount(initialData.amount);
       setDescription(initialData.description);
+      setDate(initialData.date);
     } else {
       setCategory('');
       setAmount(0);
       setDescription('');
+      setDate(new Date().toISOString().split('T')[0]);
     }
   }, [initialData]);
 
@@ -35,8 +40,8 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
     e.preventDefault();
 
     const url = initialData
-      ? `http://localhost:8080/api/expense/${initialData.id}`
-      : 'http://localhost:8080/api/expense';
+      ? `${apiUrl}/api/expense/${initialData.id}`
+      : `${apiUrl}/api/expense`;
 
     const method = initialData ? 'PUT' : 'POST';
 
@@ -50,7 +55,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
           category,
           amount,
           description,
-          date: new Date().toISOString().split('T')[0],
+          date,
         }),
       });
 
@@ -110,6 +115,20 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
           onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           placeholder="Enter description"
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+          Date
+        </label>
+        <input
+          id="date"
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           required
         />
       </div>

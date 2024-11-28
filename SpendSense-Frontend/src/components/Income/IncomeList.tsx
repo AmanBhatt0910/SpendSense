@@ -11,7 +11,12 @@ interface IncomeListProps {
 export const IncomeList: React.FC<IncomeListProps> = ({ incomeEntries, refreshData, onEdit }) => {
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8080/api/income/${id}`);
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
+      await axios.delete(`${apiUrl}/api/income/${id}`);
       await refreshData();
     } catch (error) {
       console.error('Error deleting income entry:', error);

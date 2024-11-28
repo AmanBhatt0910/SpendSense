@@ -14,7 +14,13 @@ const Statistics: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/stats");
+        const apiUrl = import.meta.env.VITE_API_URL;
+        if (!apiUrl) {
+          console.error("API URL is not defined in environment variables.");
+          return;
+        }
+
+        const response = await fetch(`${apiUrl}/api/stats`);
         if (!response.ok) {
           throw new Error("Failed to fetch stats");
         }

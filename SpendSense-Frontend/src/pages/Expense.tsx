@@ -22,7 +22,12 @@ const Expense: React.FC = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/expense/all');
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
+      const response = await fetch(`${apiUrl}/api/expense/all`);
       if (!response.ok) throw new Error('Failed to fetch expenses');
       const data = await response.json();
       setExpenses(data);
