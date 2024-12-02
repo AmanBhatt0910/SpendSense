@@ -32,31 +32,34 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, refreshData,
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+    <div className="bg-white p-6 rounded-xl shadow-xl space-y-4">
       <h2 className="text-xl font-semibold text-primary">Recent Expenses</h2>
       <ul className="space-y-4">
         {expenses.map((expense) => (
-          <li key={expense.id} className="flex justify-between items-center border-b border-neutral-light py-4 hover:bg-neutral-light rounded-lg">
+          <li
+            key={expense.id}
+            className="flex justify-between items-center border-b border-neutral-light py-4 px-3 hover:bg-neutral-light rounded-lg transition-colors duration-200"
+          >
             <div className="flex-1">
               <div className="text-lg font-medium text-neutral-dark">{expense.category}</div>
               <div className="text-sm text-neutral-dark">{expense.date}</div>
             </div>
             <div className="flex flex-col items-end">
               <div className="text-gray-600 text-sm">{expense.description}</div>
-              <div className="text-teal font-semibold">₹{expense.amount}</div>
+              <div className="text-red-500 font-semibold">₹{expense.amount}</div>
             </div>
             <div className="flex space-x-3 ml-4">
               {onEdit && (
                 <button
                   onClick={() => onEdit(expense)}
-                  className="p-2 rounded-full bg-neutral-light hover:bg-neutral-dark text-neutral-dark hover:text-white transition duration-200"
+                  className="p-2 rounded-full bg-neutral-light hover:bg-primary text-neutral-dark hover:text-white transition duration-200"
                 >
                   <PencilIcon className="h-5 w-5" />
                 </button>
               )}
               <button
                 onClick={() => handleDelete(expense.id)}
-                className="p-2 rounded-full bg-neutral-light hover:bg-neutral-dark text-neutral-dark hover:text-white transition duration-200"
+                className="p-2 rounded-full bg-neutral-light hover:bg-red-500 text-neutral-dark hover:text-white transition duration-200"
               >
                 <TrashIcon className="h-5 w-5" />
               </button>

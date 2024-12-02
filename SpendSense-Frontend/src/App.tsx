@@ -28,8 +28,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-// const apiUrl = import.meta.env.VITE_API_URL;
-//       if (!apiUrl) {
-//         console.error('API URL is not defined in environment variables.');
-//         return;
-//       }

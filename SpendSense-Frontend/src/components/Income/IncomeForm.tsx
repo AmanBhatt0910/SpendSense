@@ -55,60 +55,64 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ refreshData, incomeToEdi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-lg">
-      <h2 className="text-xl font-semibold text-primary mb-4">{incomeToEdit ? 'Edit Income Entry' : 'Add Income Entry'}</h2>
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-xl max-w-lg mx-auto">
+      <h2 className="text-2xl font-semibold text-teal-600 mb-4 text-center">
+        {incomeToEdit ? 'Edit Income Entry' : 'Add Income Entry'}
+      </h2>
 
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-neutral-dark">Category</label>
-        <input
-          type="text"
-          id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="mt-2 block w-full border border-neutral-light rounded-lg px-4 py-2 shadow-sm focus:ring-teal focus:border-teal"
-          placeholder="Enter category"
-          required
-        />
+      <div className="space-y-4">
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mt-2 block w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            placeholder="Enter category"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount (₹)</label>
+          <input
+            type="number"
+            id="amount"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            className="mt-2 block w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            placeholder="Enter amount"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+          <input
+            type="text"
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-2 block w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-teal-500 focus:border-teal-500"
+            placeholder="Enter description"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
+          <input
+            type="date"
+            id="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="mt-2 block w-full border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="amount" className="block text-sm font-medium text-neutral-dark">Amount ($)</label>
-        <input
-          type="number"
-          id="amount"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          className="mt-2 block w-full border border-neutral-light rounded-lg px-4 py-2 shadow-sm focus:ring-teal focus:border-teal"
-          placeholder="Enter amount"
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-neutral-dark">Description</label>
-        <input
-          type="text"
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="mt-2 block w-full border border-neutral-light rounded-lg px-4 py-2 shadow-sm focus:ring-teal focus:border-teal"
-          placeholder="Enter description"
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium text-neutral-dark">Date</label>
-        <input
-          type="date"
-          id="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="mt-2 block w-full border border-neutral-light rounded-lg px-4 py-2 shadow-sm focus:ring-teal focus:border-teal"
-        />
-      </div>
-
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-between mt-6">
         <button
           type="button"
           onClick={() => {
@@ -117,13 +121,14 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ refreshData, incomeToEdi
             setDescription('');
             setDate(new Date().toISOString().split('T')[0]);
           }}
-          className="px-6 py-2 bg-gray-200 rounded-lg text-neutral-dark hover:bg-gray-300"
+          className="px-6 py-2 bg-gray-200 rounded-lg text-gray-700 hover:bg-gray-300 transition-all"
         >
           Cancel
         </button>
+
         <button
           type="submit"
-          className="px-6 py-2 bg-teal text-white rounded-lg hover:bg-teal-dark"
+          className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all"
         >
           {incomeToEdit ? 'Save Changes' : 'Add Income'}
         </button>

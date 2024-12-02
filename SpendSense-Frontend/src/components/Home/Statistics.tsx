@@ -39,20 +39,20 @@ const Statistics: React.FC = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in">
+      <div className="bg-gradient-to-br from-teal-100 to-teal-50 p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
         <h2 className="text-2xl font-semibold text-neutral-dark">Total Income</h2>
-        <p className="text-3xl font-bold text-teal">₹{stats.income.toLocaleString()}</p>
-      </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-semibold text-neutral-dark">Total Expenses</h2>
-        <p className="text-3xl font-bold text-orange">₹{stats.expense.toLocaleString()}</p>
+        <p className="text-3xl font-bold text-teal animate-count-up">₹{stats.income.toLocaleString()}</p>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+      <div className="bg-gradient-to-br from-orange-100 to-orange-50 p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+        <h2 className="text-2xl font-semibold text-neutral-dark">Total Expenses</h2>
+        <p className="text-3xl font-bold text-orange animate-count-up">₹{stats.expense.toLocaleString()}</p>
+      </div>
+
+      <div className="bg-gradient-to-br from-blue-100 to-blue-50 p-6 rounded-lg shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
         <h2 className="text-2xl font-semibold text-neutral-dark">Total Savings</h2>
-        <p className="text-3xl font-bold text-primary">₹{stats.balance.toLocaleString()}</p>
+        <p className="text-3xl font-bold text-primary animate-count-up">₹{stats.balance.toLocaleString()}</p>
       </div>
     </div>
   );

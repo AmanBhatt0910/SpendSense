@@ -8,12 +8,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-neutral-light text-neutral-dark">
+      {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} />
 
-      <main className="flex-1 p-6 md:p-8 overflow-auto">
+      {/* Main content area */}
+      <main className="flex-1 p-6 md:p-8 overflow-auto md:ml-64">
         {children}
       </main>
 
+      {/* Mobile sidebar toggle button */}
       <button
         className="fixed bottom-4 right-4 md:hidden p-4 bg-primary text-white rounded-full shadow-lg z-50"
         onClick={toggleSidebar}

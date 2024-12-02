@@ -19,6 +19,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
   const [amount, setAmount] = useState<number>(0);
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -38,6 +39,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const url = initialData
       ? `${apiUrl}/api/expense/${initialData.id}`
@@ -63,9 +65,12 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
 
       await refreshData();
       onFormSubmit();
+      alert('Expense saved successfully!');
     } catch (error) {
       console.error('Error saving expense:', error);
       alert('There was an issue saving the expense. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,8 +142,9 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ refreshData, initialDa
         <button
           type="submit"
           className="flex-1 py-2 bg-primary text-white rounded-lg shadow-lg hover:bg-primary-dark transition-all"
+          disabled={loading}
         >
-          {initialData ? 'Update Expense' : 'Add Expense'}
+          {loading ? 'Saving...' : initialData ? 'Update Expense' : 'Add Expense'}
         </button>
       </div>
     </form>
