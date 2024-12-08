@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface IncomeService {
 
-    Income postIncome(IncomeDTO incomeDTO);
+    Income postIncome(IncomeDTO incomeDTO, String username);
 
-    List<IncomeDTO> getAllIncomes();
+    List<IncomeDTO> getAllIncomes(String username);
 
-    public Income updateIncome(Long id, IncomeDTO incomeDTO);
+    Income updateIncome(Long id, IncomeDTO incomeDTO, String username);
 
-    public IncomeDTO getIncomeById(Long id);
+    IncomeDTO getIncomeById(Long id, String username);
 
-    public void deleteIncome(Long id);
+    void deleteIncome(Long id, String username);
 }

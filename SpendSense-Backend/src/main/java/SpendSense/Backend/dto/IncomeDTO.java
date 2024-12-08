@@ -10,7 +10,7 @@ public class IncomeDTO {
 
     private String title;
 
-    private Integer amount;
+    private double amount;
 
     private String description;
 

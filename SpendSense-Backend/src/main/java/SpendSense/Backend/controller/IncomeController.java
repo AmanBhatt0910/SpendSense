@@ -7,8 +7,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 @RestController
 @RequestMapping("/api/income")
@@ -18,25 +19,47 @@ public class IncomeController {
 
     private final IncomeService incomeService;
 
+    // Extracting username from JWT Token via SecurityContext
+    private String getUsernameFromJwt() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null ? authentication.getName() : null;
+    }
+
     @PostMapping
     public ResponseEntity<?> postIncome(@RequestBody IncomeDTO incomeDTO) {
-        Income createdIncome = incomeService.postIncome(incomeDTO);
-        if(createdIncome != null) {
+        try {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            Income createdIncome = incomeService.postIncome(incomeDTO, username);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdIncome);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create income.");
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllIncome() {
-        return ResponseEntity.ok(incomeService.getAllIncomes());
+        try {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(incomeService.getAllIncomes(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to fetch incomes.");
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateIncome(@PathVariable Long id, @RequestBody IncomeDTO incomeDTO) {
         try {
-            return ResponseEntity.ok(incomeService.updateIncome(id, incomeDTO));
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(incomeService.updateIncome(id, incomeDTO, username));
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception e) {
@@ -47,7 +70,11 @@ public class IncomeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getIncomeWithId(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(incomeService.getIncomeById(id));
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(incomeService.getIncomeById(id, username));
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception ex) {
@@ -58,7 +85,11 @@ public class IncomeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteIncome(@PathVariable Long id) {
         try {
-            incomeService.deleteIncome(id);
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            incomeService.deleteIncome(id, username);
             return ResponseEntity.ok().body(null);
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

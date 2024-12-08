@@ -1,69 +1,79 @@
-// Implements the actual business logic for expenses and uses repository methods to interact with the database.
-
 package SpendSense.Backend.services.expense;
 
 import SpendSense.Backend.dto.ExpenseDTO;
 import SpendSense.Backend.entity.Expense;
+import SpendSense.Backend.entity.User;
 import SpendSense.Backend.repository.ExpenseRepository;
+import SpendSense.Backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service //Marks this class as a Spring service
-@RequiredArgsConstructor // Automatically generates a constructor for all final fields
+@Service
+@RequiredArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
 
-//    Inject ExpenseRepository
     private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
 
-    public Expense postExpense(ExpenseDTO expenseDTO) {
-        return saveOrUpdateExpense(new Expense(), expenseDTO);
+    @Override
+    public Expense postExpense(ExpenseDTO expenseDTO, String username) {
+        User user = getUserByUsername(username);
+        Expense expense = new Expense();
+        return saveOrUpdateExpense(expense, expenseDTO, user);
     }
 
-    private Expense saveOrUpdateExpense(Expense expense, ExpenseDTO expenseDTO) {
+    private Expense saveOrUpdateExpense(Expense expense, ExpenseDTO expenseDTO, User user) {
+        // Set fields from DTO
         expense.setTitle(expenseDTO.getTitle());
         expense.setDate(expenseDTO.getDate());
         expense.setAmount(expenseDTO.getAmount());
-        expense.setAmount(expenseDTO.getAmount());
         expense.setCategory(expenseDTO.getCategory());
         expense.setDescription(expenseDTO.getDescription());
-
+        expense.setUser(user);
         return expenseRepository.save(expense);
     }
 
-    public Expense updateExpense(Long id, ExpenseDTO expenseDTO)  {
-        Optional<Expense> optionalExpense = expenseRepository.findById(id);
-        if(optionalExpense.isPresent()) {
-            return saveOrUpdateExpense(optionalExpense.get(), expenseDTO);
-        } else {
-            throw new EntityNotFoundException("Expense not present with id: " + id);
-        }
+    @Override
+    public Expense updateExpense(Long id, ExpenseDTO expenseDTO, String username) {
+        User user = getUserByUsername(username);
+        Expense expense = expenseRepository.findById(id)
+                .filter(e -> e.getUser().equals(user))
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found for user with id: " + id));
+        return saveOrUpdateExpense(expense, expenseDTO, user);
     }
 
-    public List<Expense> getAllExpenses() {
-        return expenseRepository.findAll().stream().sorted(Comparator.comparing(Expense::getDate).reversed()).collect(Collectors.toList());
+    @Override
+    public List<Expense> getAllExpenses(String username) {
+        User user = getUserByUsername(username);
+        return expenseRepository.findByUser(user).stream() // Fetch all expenses for the user
+                .sorted(Comparator.comparing(Expense::getDate).reversed()) // Sort by date (most recent first)
+                .collect(Collectors.toList());
     }
 
-    public Expense getExpenseById(long id) {
-        Optional<Expense> optionalExpense = expenseRepository.findById(id);
-        if(optionalExpense.isPresent()) {
-            return optionalExpense.get();
-        } else {
-            throw new EntityNotFoundException("Expense not present with id: " + id);
-        }
+    @Override
+    public Expense getExpenseById(long id, String username) {
+        User user = getUserByUsername(username);
+        return expenseRepository.findById(id)
+                .filter(e -> e.getUser().equals(user))
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found for user with id: " + id));
     }
 
-    public void deleteExpense(long id) {
-        Optional<Expense> optionalExpense = expenseRepository.findById(id);
-        if(optionalExpense.isPresent()) {
-            expenseRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Expense not present with id: " + id);
-        }
+    @Override
+    public void deleteExpense(long id, String username) {
+        User user = getUserByUsername(username);
+        Expense expense = expenseRepository.findById(id)
+                .filter(e -> e.getUser().equals(user))
+                .orElseThrow(() -> new EntityNotFoundException("Expense not found for user with id: " + id));
+        expenseRepository.delete(expense);
+    }
+
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
     }
 }

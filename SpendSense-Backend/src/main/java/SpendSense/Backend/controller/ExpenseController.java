@@ -5,66 +5,96 @@ import SpendSense.Backend.entity.Expense;
 import SpendSense.Backend.services.expense.ExpenseService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@RestController //Specifies that this class handles HTTP requests and produces RESTful responses
-@RequestMapping("/api/expense") //Sets the base URI for all endpoints within this controller.
+@RestController
+@RequestMapping("/api/expense")
 @RequiredArgsConstructor
-@CrossOrigin("*") //Allows cross-origin requests from any origin, useful for frontend-backend communication during development
+@CrossOrigin("*")
 public class ExpenseController {
 
-//    Inject Expense Service
     private final ExpenseService expenseService;
+
+    // Extracting username from JWT Token via SecurityContext
+    private String getUsernameFromJwt() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null ? authentication.getName() : null;
+    }
 
     @PostMapping
     public ResponseEntity<?> postExpense(@RequestBody ExpenseDTO dto) {
-        Expense createdExpense = expenseService.postExpense(dto);
-        if(createdExpense != null) {
+        try {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            Expense createdExpense = expenseService.postExpense(dto, username);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdExpense);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create expense.");
         }
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllExpenses() {
-        return ResponseEntity.ok(expenseService.getAllExpenses());
+        try {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(expenseService.getAllExpenses(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to fetch expenses.");
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getExpenseById(@PathVariable long id) {
         try {
-            return ResponseEntity.ok(expenseService.getExpenseById(id));
-        } catch(EntityNotFoundException ex) {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(expenseService.getExpenseById(id, username));
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateExpense(@PathVariable long id, @RequestBody ExpenseDTO dto) {
         try {
-            return ResponseEntity.ok(expenseService.updateExpense(id, dto));
-        } catch(EntityNotFoundException ex) {
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            return ResponseEntity.ok(expenseService.updateExpense(id, dto, username));
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteExpense(@PathVariable long id) {
         try {
-            expenseService.deleteExpense(id);
-            return ResponseEntity.ok(null);
+            String username = getUsernameFromJwt();
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+            }
+            expenseService.deleteExpense(id, username);
+            return ResponseEntity.ok().build();
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
         }
     }
 }

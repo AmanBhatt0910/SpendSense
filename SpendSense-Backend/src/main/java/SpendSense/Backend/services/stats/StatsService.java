@@ -4,8 +4,9 @@ import SpendSense.Backend.dto.GraphDTO;
 import SpendSense.Backend.dto.StatsDTO;
 
 public interface StatsService {
+    // Method to get stats data
+    StatsDTO getStats(String username);
 
-    public GraphDTO getChartData();
-
-    StatsDTO getStats();
+    // Method to get chart data
+    GraphDTO getChartData(String username);
 }
