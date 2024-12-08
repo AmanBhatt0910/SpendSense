@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data //getters and setters
 public class Expense {
     @Id //primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment on new creation
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
