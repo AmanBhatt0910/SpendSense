@@ -9,21 +9,24 @@ import Categories from "./pages/Categories.tsx";
 import Transactions from "./pages/Transactions";
 import Goals from "./pages/Goals";
 import Notifications from "./pages/Notifications";
+import Login from "./pages/Login.tsx";
+import Register from "./pages/Register.tsx";
 
 const App: React.FC = () => {
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/income" element={<Income />} />
-        <Route path="/expense" element={<Expense />} />
-        <Route path="/settings" element={<Setting />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/goals" element={<Goals />} />
-        <Route path="/notifications" element={<Notifications />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      <Route path="/" element={<Login />}/>
+      <Route path="/login" element={<Login />}/>
+      <Route path="/register" element={<Register />}/>
+      <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+      <Route path="/income" element={<Layout><Income /></Layout>} />
+      <Route path="/expense" element={<Layout><Expense /></Layout>} />
+      <Route path="/settings" element={<Layout><Setting /></Layout>} />
+      <Route path="/categories" element={<Layout><Categories /></Layout>} />
+      <Route path="/transactions" element={<Layout><Transactions /></Layout>} />
+      <Route path="/goals" element={<Layout><Goals /></Layout>} />
+      <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
+    </Routes>
   );
 };
 

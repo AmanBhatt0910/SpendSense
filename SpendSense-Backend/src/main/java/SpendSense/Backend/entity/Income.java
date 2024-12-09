@@ -22,11 +22,10 @@ public class Income {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Foreign key to User table
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Method to convert Income entity to IncomeDTO
-    public IncomeDTO getIncomeDTO() {
+    public IncomeDTO toDTO() {
         IncomeDTO incomeDTO = new IncomeDTO();
         incomeDTO.setId(this.id);
         incomeDTO.setTitle(this.title);

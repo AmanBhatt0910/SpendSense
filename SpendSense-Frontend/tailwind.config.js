@@ -1,5 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -26,6 +25,28 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.3s ease-in-out',
+        fadeOut: 'fadeOut 0.3s ease-in-out',
+        pattern: 'pattern 30s linear infinite', // Adding animation for background
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+        fadeOut: {
+          '0%': { opacity: 1 },
+          '100%': { opacity: 0 },
+        },
+        pattern: {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '100% 100%' },
+        },
+      },
+      backgroundImage: {
+        'diagonal-lines': 'linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent)',
       },
     },
   },

@@ -39,28 +39,31 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
-    public Expense updateExpense(Long id, ExpenseDTO expenseDTO, String username) {
+    public ExpenseDTO updateExpense(Long id, ExpenseDTO expenseDTO, String username) {
         User user = getUserByUsername(username);
         Expense expense = expenseRepository.findById(id)
                 .filter(e -> e.getUser().equals(user))
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found for user with id: " + id));
-        return saveOrUpdateExpense(expense, expenseDTO, user);
+        Expense updatedExpense = saveOrUpdateExpense(expense, expenseDTO, user);
+        return mapToDTO(updatedExpense);
     }
 
     @Override
-    public List<Expense> getAllExpenses(String username) {
+    public List<ExpenseDTO> getAllExpenses(String username) {
         User user = getUserByUsername(username);
         return expenseRepository.findByUser(user).stream() // Fetch all expenses for the user
                 .sorted(Comparator.comparing(Expense::getDate).reversed()) // Sort by date (most recent first)
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Expense getExpenseById(long id, String username) {
+    public ExpenseDTO getExpenseById(long id, String username) {
         User user = getUserByUsername(username);
-        return expenseRepository.findById(id)
+        Expense expense = expenseRepository.findById(id)
                 .filter(e -> e.getUser().equals(user))
                 .orElseThrow(() -> new EntityNotFoundException("Expense not found for user with id: " + id));
+        return mapToDTO(expense);
     }
 
     @Override
@@ -75,5 +78,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     private User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+    }
+
+    private ExpenseDTO mapToDTO(Expense expense) {
+        ExpenseDTO dto = new ExpenseDTO();
+        dto.setId(expense.getId());
+        dto.setTitle(expense.getTitle());
+        dto.setDescription(expense.getDescription());
+        dto.setCategory(expense.getCategory());
+        dto.setDate(expense.getDate());
+        dto.setAmount(expense.getAmount());
+        return dto;
     }
 }

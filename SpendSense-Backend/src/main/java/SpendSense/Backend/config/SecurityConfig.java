@@ -22,7 +22,6 @@ public class SecurityConfig {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
 
-    // Constructor to inject JwtTokenUtil and UserRepository
     public SecurityConfig(JwtTokenUtil jwtTokenUtil, UserRepository userRepository) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.userRepository = userRepository;
@@ -40,24 +39,25 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // BCrypt password encoder
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new MyUserDetailsService(userRepository);  // Return the custom user details service
+        return new MyUserDetailsService(userRepository);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF as we are using JWT
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()  // Allow authentication endpoints
-                        .anyRequest().authenticated()  // Require authentication for any other request
+                        .requestMatchers("/api/auth/**").permitAll()  // Allow open access to auth routes
+                        .requestMatchers("/api/income/**", "/api/expense/**", "/api/stats/**").authenticated() // Protect your resources
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), jwtTokenUtil),
-                        UsernamePasswordAuthenticationFilter.class);  // Add the JWT filter before default authentication filter
+                        UsernamePasswordAuthenticationFilter.class);  // Add the JWT filter before the default authentication filter
 
         return http.build();
     }

@@ -1,5 +1,3 @@
-// Holds data for transferring expense information between different layers.
-
 package SpendSense.Backend.dto;
 
 import lombok.Data;

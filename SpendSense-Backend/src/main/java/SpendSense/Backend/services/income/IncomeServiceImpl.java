@@ -9,7 +9,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,58 +20,68 @@ public class IncomeServiceImpl implements IncomeService {
     private final UserRepository userRepository;
 
     @Override
-    public Income postIncome(IncomeDTO incomeDTO, String username) {
+    public IncomeDTO postIncome(IncomeDTO incomeDTO, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Income income = new Income();
-        income.setUser(user);
-        return saveOrUpdateIncome(income, incomeDTO);
-    }
-
-    private Income saveOrUpdateIncome(Income income, IncomeDTO incomeDTO) {
         income.setTitle(incomeDTO.getTitle());
+        income.setAmount(incomeDTO.getAmount());
         income.setDate(incomeDTO.getDate());
-        income.setAmount(Double.valueOf(incomeDTO.getAmount()));
         income.setCategory(incomeDTO.getCategory());
         income.setDescription(incomeDTO.getDescription());
-        return incomeRepository.save(income);
+        income.setUser(user);
+
+        Income savedIncome = incomeRepository.save(income);
+        return savedIncome.toDTO();
     }
 
     @Override
     public List<IncomeDTO> getAllIncomes(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return incomeRepository.findByUser(user).stream()
-                .sorted(Comparator.comparing(Income::getDate).reversed())
-                .map(Income::getIncomeDTO) // Convert Income entity to IncomeDTO
-                .collect(Collectors.toList());
+        List<Income> incomes = incomeRepository.findByUser(user);
+        return incomes.stream().map(Income::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Income updateIncome(Long id, IncomeDTO incomeDTO, String username) {
-        Income income = findIncomeByIdAndUser(id, username);
-        return saveOrUpdateIncome(income, incomeDTO);
+    public IncomeDTO updateIncome(Long id, IncomeDTO incomeDTO, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Income income = incomeRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new EntityNotFoundException("Income not found"));
+
+        income.setTitle(incomeDTO.getTitle());
+        income.setAmount(incomeDTO.getAmount());
+        income.setDate(incomeDTO.getDate());
+        income.setCategory(incomeDTO.getCategory());
+        income.setDescription(incomeDTO.getDescription());
+
+        Income updatedIncome = incomeRepository.save(income);
+        return updatedIncome.toDTO();
     }
 
     @Override
     public IncomeDTO getIncomeById(Long id, String username) {
-        Income income = findIncomeByIdAndUser(id, username);
-        return income.getIncomeDTO(); // Convert Income entity to IncomeDTO
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Income income = incomeRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new EntityNotFoundException("Income not found"));
+
+        return income.toDTO();
     }
 
     @Override
     public void deleteIncome(Long id, String username) {
-        Income income = findIncomeByIdAndUser(id, username);
-        incomeRepository.delete(income);
-    }
-
-    private Income findIncomeByIdAndUser(Long id, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return incomeRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new EntityNotFoundException("Income not found with id: " + id + " for user: " + username));
+        Income income = incomeRepository.findByIdAndUser(id, user)
+                .orElseThrow(() -> new EntityNotFoundException("Income not found"));
+
+        incomeRepository.delete(income);
     }
 }

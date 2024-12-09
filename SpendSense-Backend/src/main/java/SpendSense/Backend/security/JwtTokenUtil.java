@@ -3,57 +3,57 @@ package SpendSense.Backend.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
 import java.security.Key;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
-
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenUtil {
 
-    private final String SECRET_KEY = "Ck9HxmQa7BIo8EcyIn3H9xlqk96PFCeU9pP+y4KITQk=";
+    // Secure 512-bit Base64 encoded secret key
+    private final String SECRET_KEY = "uPxqkXZYo9k56Ez+VwsQfBGyDDoafLONgDSoXzme4JkxC9B4RB9apIChKqxUJDzh+w5e47vKhbz9TKQAEfu6JQ==";
 
-    // Generate JWT token for a given username
+    // Generate a Key object from the secret key
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes()); // Ensures the key is strong enough for HS512
+    }
+
+    // Generate JWT token
     public String generateToken(String username) {
-        Key key = new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName());
-
-        // Token expiration time (24 hours)
-        long EXPIRATION_TIME = 86400000L;
+        long EXPIRATION_TIME = 86400000L; // Token expiration time (24 hours)
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    // Extract username from the token
+    // Extract username from token
     public String extractUsername(String token) {
-        Claims claims = extractClaims(token);  // Reuse method to extract claims
-        return claims.getSubject();
+        return extractClaims(token).getSubject();
     }
 
-    // Validate the token
+    // Validate token
     public boolean validateToken(String token, String username) {
         return username.equals(extractUsername(token)) && !isTokenExpired(token);
     }
 
-    // Check if the token is expired
+    // Check if token is expired
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Extract expiration date from the token
+    // Extract expiration date from token
     private Date extractExpiration(String token) {
-        Claims claims = extractClaims(token);  // Reuse method to extract claims
-        return claims.getExpiration();
+        return extractClaims(token).getExpiration();
     }
 
-    // Extract claims from the token
+    // Extract claims from token
     private Claims extractClaims(String token) {
-        return Jwts.parserBuilder()  // Use parserBuilder() for newer versions
-                .setSigningKey(SECRET_KEY.getBytes())  // Use the byte array of the secret key
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
